@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# This hook reads current branch name and seeks first number there.
+# Paste script to the .git/hooks directory for activate
+
+# Configs
+PREFIX_PATTERN="TP-\$TICKET_NUMBER:"
+
+# Seeking number and prepare prefix
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+TICKET_NUMBER=$(echo $BRANCH_NAME | grep -oE '[0-9]+' | head -1)
+PREFIX=$(eval echo $PREFIX_PATTERN)
+
+# If number was found add already prepared prefix to the message
+if [ -n "$TICKET_NUMBER" ]; then
+	sed -i.bak -e "1s/^/$PREFIX /" $1
+fi
